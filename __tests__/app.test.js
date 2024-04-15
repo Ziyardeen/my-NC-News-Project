@@ -12,6 +12,14 @@ beforeEach(() => {
   return seed(data);
 });
 
+
+describe("/api/topics", () => {
+  test("404- test for bad URL", () => {
+    return request(app).get("/Not_A_URl").expect(404);
+  });
+});
+
+
 describe("/api/healthcheck: HealthCheck to confirm connection with sever", () => {
   describe("/api/healthcheck", () => {
     test("200 - returns a status of 200 ", () => {
