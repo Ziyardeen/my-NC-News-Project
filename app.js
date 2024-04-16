@@ -1,5 +1,5 @@
 const express = require("express");
-const { healthcheck, getTopics } = require("./app.controller");
+const { healthcheck, getTopics, getEndpoints } = require("./app.controller");
 
 const app = express();
 
@@ -8,6 +8,7 @@ app.get("/api/healthcheck", healthcheck);
 
 //ENDPOINTS MIDDLEWARE
 app.get("/api/topics", getTopics);
+app.get("/api", getEndpoints);
 
 //ERROR HANDLING
 
