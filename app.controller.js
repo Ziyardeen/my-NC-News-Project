@@ -1,5 +1,6 @@
 const fetchTopics = require("./app.models");
 const endpoints = require("./endpoints.json");
+
 function healthcheck(req, res, next) {
   res.status(200).send({ msg: "Server Connection Establised" });
 }
@@ -16,4 +17,5 @@ function getTopics(req, res, next) {
 function getEndpoints(req, res, next) {
   res.status(200).send(endpoints);
 }
+
 module.exports = { healthcheck, getTopics, getEndpoints };
