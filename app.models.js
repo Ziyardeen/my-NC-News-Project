@@ -44,8 +44,6 @@ function fetchArticles() {
       return err;
     });
 }
-// 'SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC',
-//       [articleId]
 
 function fetchCommentsByArticleById(articleId) {
   return db
@@ -54,13 +52,17 @@ function fetchCommentsByArticleById(articleId) {
       [articleId]
     )
     .then(({ rows }) => {
-      if (rows.length === 0) {
-        return Promise.reject({
-          status: 404,
-          msg: "article_id does not exist",
-        });
-      }
       return rows;
+    });
+}
+
+function checkArticleExists(article_id) {
+  return db
+    .query("SELECT * FROM articles WHERE article_id = $1", [article_id])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Not found" });
+      }
     });
 }
 
@@ -69,4 +71,5 @@ module.exports = {
   fetchArticleById,
   fetchArticles,
   fetchCommentsByArticleById,
+  checkArticleExists,
 };

@@ -114,7 +114,7 @@ describe("/api/articles/:article_id", () => {
 });
 
 describe("GET 200 /api/articles", () => {
-  test("GET Status 200:", () => {
+  test("GET Status 200: return an array of articles", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -146,7 +146,7 @@ describe("GET 200 /api/articles", () => {
 });
 
 describe(" /api/articles/:article_id/comments", () => {
-  test("", () => {
+  test("Status 200 returns an array of comments associated with the article id", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
@@ -173,13 +173,22 @@ describe(" /api/articles/:article_id/comments", () => {
         expect(body).toBeSortedBy("created_at", { descending: true });
       });
   });
+  //Refactored Test Case
+  test("GET Status 200: valid id with no associated comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(0);
+      });
+  });
 
   test("GET:404 sends an appropriate status and error message when given a valid but non-existent article id", () => {
     return request(app)
       .get("/api/articles/999/comments")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("article_id does not exist");
+        expect(body.msg).toBe("Not found");
       });
   });
   test("GET:400 sends an appropriate status and error message when given a valid but non-existent article id", () => {
