@@ -3,6 +3,7 @@ const {
   fetchArticleById,
   fetchArticles,
   fetchCommentsByArticleById,
+  checkArticleExists,
 } = require("./app.models");
 const endpoints = require("./endpoints.json");
 
@@ -48,8 +49,11 @@ function getArticles(req, res, next) {
 function getCommentsByArticleById(req, res, next) {
   const { article_id } = req.params;
 
-  fetchCommentsByArticleById(article_id)
-    .then((comments) => {
+  Promise.all([
+    fetchCommentsByArticleById(article_id),
+    checkArticleExists(article_id),
+  ])
+    .then(([comments]) => {
       res.status(200).send(comments);
     })
     .catch((err) => {
