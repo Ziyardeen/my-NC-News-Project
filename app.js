@@ -7,6 +7,7 @@ const {
   getArticles,
   getCommentsByArticleById,
   postCommentByArticleId,
+  patchArticleById,
 } = require("./app.controller");
 
 const app = express();
@@ -22,6 +23,7 @@ app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleById);
 app.post("/api/articles/:article_id/comments", postCommentByArticleId);
+app.patch("/api/articles/:article_id", patchArticleById);
 
 //ERROR HANDLING
 /////////////BAD REQUEST

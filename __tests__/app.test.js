@@ -5,6 +5,7 @@ const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
 const endpoints = require("../endpoints.json");
 const testArticles = require("../db/data/test-data/articles");
+const { updateVotes } = require("../app.models");
 
 afterAll(() => {
   return db.end();
@@ -212,13 +213,12 @@ describe("POST:/api/articles/:article_id/comments", () => {
       .send(newComment)
       .expect(201)
       .then(({ body }) => {
-        // console.log(body, "<<<<<<<<<<");
         expect(body.author).toBe(newComment.username);
         expect(body.body).toBe(newComment.body);
       });
   });
 
-  test("POST:400 responds with an appropriate status and error message when provided with a bad team (no comment body)", () => {
+  test("POST:400 responds with an appropriate status and error message when provided with a bad comment (no comment body)", () => {
     const newComment = {
       username: "icellusedkars",
     };
@@ -232,7 +232,7 @@ describe("POST:/api/articles/:article_id/comments", () => {
   });
   test("POST:404 responds with an appropriate status and error message when provided with a invalid data(wrong username)", () => {
     const newComment = {
-      username: "Ziyardeen",
+      username: "John Doe",
       body: "Hello",
     };
     return request(app)
@@ -245,4 +245,55 @@ describe("POST:/api/articles/:article_id/comments", () => {
   });
 });
 
-//////////////////////////////////////////
+describe("PATCH /api/articles/:article_id", () => {
+  test("200 - returns the updated ride", () => {
+    const updateVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updateVotes)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body[0]).toMatchObject({
+          article_id: 1,
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 101,
+          article_img_url:
+            "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        });
+      });
+  });
+  test("PATCH:400 responds with an appropriate status and error message when provided with a bad data (no inc_votes)", () => {
+    const updateVotes = { votes: 1 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updateVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("PATCH:400 responds with an appropriate status and error message when provided with a bad data (inc_votes is not a number)", () => {
+    const updateVotes = { inc_votes: "hey" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updateVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("PATCH:404 responds with an appropriate status and error message when provided with a invalid data (article Not found )", () => {
+    const updateVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/999")
+      .send(updateVotes)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found");
+      });
+  });
+});
