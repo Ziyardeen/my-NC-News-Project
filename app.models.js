@@ -38,12 +38,35 @@ function fetchArticles() {
      `
     )
     .then(({ rows }) => {
-      //   console.log(rows, "<<<<<<<<<<<<<<<<<");
       return rows;
     })
     .catch((err) => {
       return err;
     });
 }
+// 'SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC',
+//       [articleId]
 
-module.exports = { fetchTopics, fetchArticleById, fetchArticles };
+function fetchCommentsByArticleById(articleId) {
+  return db
+    .query(
+      `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC`,
+      [articleId]
+    )
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: "article_id does not exist",
+        });
+      }
+      return rows;
+    });
+}
+
+module.exports = {
+  fetchTopics,
+  fetchArticleById,
+  fetchArticles,
+  fetchCommentsByArticleById,
+};

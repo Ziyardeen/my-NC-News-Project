@@ -5,7 +5,6 @@ const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
 const endpoints = require("../endpoints.json");
 const testArticles = require("../db/data/test-data/articles");
-console.log(testArticles.length);
 
 afterAll(() => {
   return db.end();
@@ -15,7 +14,7 @@ beforeEach(() => {
   return seed(data);
 });
 
-describe("/api/topics", () => {
+describe("GET /api/topics", () => {
   test("404- test for bad URL", () => {
     return request(app).get("/Not_A_URl").expect(404);
   });
@@ -29,8 +28,8 @@ describe("/api/healthcheck: HealthCheck to confirm connection with sever", () =>
   });
 });
 
-describe("/api/topics", () => {
-  test("status:200, Should get all topics with the corrrect data", () => {
+describe("GET /api/topics", () => {
+  test("GET status:200, Should get all topics with the corrrect data", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -43,7 +42,7 @@ describe("/api/topics", () => {
       });
   });
 
-  test("status:200, Should return the correct data", () => {
+  test("GET status:200, Should return the correct data", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -53,7 +52,7 @@ describe("/api/topics", () => {
       });
   });
 
-  test("status:200, Should return the correct data in the correct order", () => {
+  test("GET status:200, Should return the correct data in the correct order", () => {
     return request(app)
       .get("/api/topics")
       .expect(200)
@@ -66,8 +65,8 @@ describe("/api/topics", () => {
   });
 });
 
-describe("/api", () => {
-  test("status 200: Should return the constent of the endpoints.json file", () => {
+describe("GET /api", () => {
+  test("GET status 200: Should return the constent of the endpoints.json file", () => {
     request(app)
       .get("/api")
       .expect(200)
@@ -114,8 +113,8 @@ describe("/api/articles/:article_id", () => {
   });
 });
 
-describe("/api/articles", () => {
-  test("Status 200:", () => {
+describe("GET 200 /api/articles", () => {
+  test("GET Status 200:", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -131,6 +130,64 @@ describe("/api/articles", () => {
           expect(typeof article.article_img_url).toBe("string");
           expect(typeof article.comment_count).toBe("string");
         });
+      });
+  });
+
+  test("GET Status 200: To test the order of arrangement of the object", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(13);
+
+        expect(body).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+});
+
+describe(" /api/articles/:article_id/comments", () => {
+  test("", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(11);
+        body.forEach((body) => {
+          expect(typeof body.comment_id).toBe("number");
+          expect(typeof body.votes).toBe("number");
+          expect(typeof body.created_at).toBe("string");
+          expect(typeof body.author).toBe("string");
+          expect(typeof body.body).toBe("string");
+          expect(body.article_id).toBe(1);
+        });
+      });
+  });
+
+  test("GET Status 200: To test the order of arrangement of the object", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(11);
+
+        expect(body).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+
+  test("GET:404 sends an appropriate status and error message when given a valid but non-existent article id", () => {
+    return request(app)
+      .get("/api/articles/999/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article_id does not exist");
+      });
+  });
+  test("GET:400 sends an appropriate status and error message when given a valid but non-existent article id", () => {
+    return request(app)
+      .get("/api/articles/not-valid/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
       });
   });
 });
