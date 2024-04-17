@@ -5,6 +5,7 @@ const {
   getEndpoints,
   getArticleById,
   getArticles,
+  getCommentsByArticleById,
 } = require("./app.controller");
 
 const app = express();
@@ -17,6 +18,7 @@ app.get("/api/topics", getTopics);
 app.get("/api", getEndpoints);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles", getArticles);
+app.get("/api/articles/:article_id/comments", getCommentsByArticleById);
 
 //ERROR HANDLING
 /////////////BAD REQUEST
@@ -30,12 +32,10 @@ app.use((err, req, res, next) => {
 
 app.use((err, req, res, next) => {
   if (err.status === 404) {
-    res.status(err.status).send({ msg: "Not Found" });
+    res.status(err.status).send({ msg: err.msg });
   }
   next(err);
 });
-
-///General error handler for wrong endpoint
 
 /////////////INTERNAl ERROR
 app.use((err, req, res, next) => {

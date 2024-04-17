@@ -2,6 +2,7 @@ const {
   fetchTopics,
   fetchArticleById,
   fetchArticles,
+  fetchCommentsByArticleById,
 } = require("./app.models");
 const endpoints = require("./endpoints.json");
 
@@ -20,7 +21,6 @@ function getTopics(req, res, next) {
 
 function getEndpoints(req, res, next) {
   res.status(200).send(endpoints);
-  next();
 }
 
 function getArticleById(req, res, next) {
@@ -36,16 +36,21 @@ function getArticleById(req, res, next) {
 }
 
 function getArticles(req, res, next) {
-  const resourse = req.url.split("/")[req.url.split("/").length - 1];
-  console.log(resourse);
-  if (resourse !== "articles") {
-    console.log("hello");
-    res.status(404).send({ msg: "Not Found" });
-  }
-
   fetchArticles()
     .then((articles) => {
       res.status(200).send(articles);
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
+function getCommentsByArticleById(req, res, next) {
+  const { article_id } = req.params;
+
+  fetchCommentsByArticleById(article_id)
+    .then((comments) => {
+      res.status(200).send(comments);
     })
     .catch((err) => {
       next(err);
@@ -58,4 +63,5 @@ module.exports = {
   getEndpoints,
   getArticleById,
   getArticles,
+  getCommentsByArticleById,
 };
