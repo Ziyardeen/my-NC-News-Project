@@ -5,6 +5,7 @@ const {
   fetchCommentsByArticleById,
   checkArticleExists,
   insertComment,
+  updateVotes,
 } = require("./app.models");
 const endpoints = require("./endpoints.json");
 
@@ -78,6 +79,26 @@ function postCommentByArticleId(req, res, next) {
       next(err);
     });
 }
+
+function patchArticleById(req, res, next) {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+
+  if (!inc_votes) {
+    res.status(400).send({ msg: "Bad request" });
+  }
+
+  updateVotes(article_id, inc_votes)
+    .then((data) => {
+      if (data.length === 0) {
+        return Promise.reject({ status: 404, msg: "Not found" });
+      }
+      res.status(200).send(data);
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
 module.exports = {
   healthcheck,
   getTopics,
@@ -86,4 +107,5 @@ module.exports = {
   getArticles,
   getCommentsByArticleById,
   postCommentByArticleId,
+  patchArticleById,
 };
