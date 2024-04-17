@@ -4,6 +4,7 @@ const {
   fetchArticles,
   fetchCommentsByArticleById,
   checkArticleExists,
+  insertComment,
 } = require("./app.models");
 const endpoints = require("./endpoints.json");
 
@@ -61,6 +62,22 @@ function getCommentsByArticleById(req, res, next) {
     });
 }
 
+function postCommentByArticleId(req, res, next) {
+  const { article_id } = req.params;
+  const { username, body } = req.body;
+
+  if (!username || !body) {
+    return res.status(400).send({ msg: "Bad request" });
+  }
+
+  insertComment(article_id, username, body)
+    .then(([data]) => {
+      res.status(201).send(data);
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
 module.exports = {
   healthcheck,
   getTopics,
@@ -68,4 +85,5 @@ module.exports = {
   getArticleById,
   getArticles,
   getCommentsByArticleById,
+  postCommentByArticleId,
 };

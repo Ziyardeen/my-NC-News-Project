@@ -66,10 +66,22 @@ function checkArticleExists(article_id) {
     });
 }
 
+function insertComment(article_id, author, body) {
+  return db
+    .query(
+      `INSERT INTO comments (article_id,author,body) VALUES ($1, $2, $3) RETURNING *;`,
+      [article_id, author, body]
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+}
+
 module.exports = {
   fetchTopics,
   fetchArticleById,
   fetchArticles,
   fetchCommentsByArticleById,
   checkArticleExists,
+  insertComment,
 };

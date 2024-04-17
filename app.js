@@ -6,9 +6,11 @@ const {
   getArticleById,
   getArticles,
   getCommentsByArticleById,
+  postCommentByArticleId,
 } = require("./app.controller");
 
 const app = express();
+app.use(express.json());
 
 // SERVER HEALTHCHECK
 app.get("/api/healthcheck", healthcheck);
@@ -19,6 +21,7 @@ app.get("/api", getEndpoints);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleById);
+app.post("/api/articles/:article_id/comments", postCommentByArticleId);
 
 //ERROR HANDLING
 /////////////BAD REQUEST
@@ -26,6 +29,12 @@ app.get("/api/articles/:article_id/comments", getCommentsByArticleById);
 app.use((err, req, res, next) => {
   if (err.code === "22P02") {
     res.status(400).send({ msg: "Bad request" });
+  }
+  next(err);
+});
+app.use((err, req, res, next) => {
+  if (err.code === "23503") {
+    res.status(404).send({ msg: "Username Not found" });
   }
   next(err);
 });

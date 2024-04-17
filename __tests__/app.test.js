@@ -200,3 +200,49 @@ describe(" /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("POST:/api/articles/:article_id/comments", () => {
+  test("POST 201", () => {
+    const newComment = {
+      username: "icellusedkars",
+      body: "Hello",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        // console.log(body, "<<<<<<<<<<");
+        expect(body.author).toBe(newComment.username);
+        expect(body.body).toBe(newComment.body);
+      });
+  });
+
+  test("POST:400 responds with an appropriate status and error message when provided with a bad team (no comment body)", () => {
+    const newComment = {
+      username: "icellusedkars",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("POST:404 responds with an appropriate status and error message when provided with a invalid data(wrong username)", () => {
+    const newComment = {
+      username: "Ziyardeen",
+      body: "Hello",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Username Not found");
+      });
+  });
+});
+
+//////////////////////////////////////////
