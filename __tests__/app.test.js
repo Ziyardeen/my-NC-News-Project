@@ -191,3 +191,17 @@ describe(" /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+// describe("POST:/api/articles/:article_id/comments", () => {
+//   test("POST 201", () => {
+//     return request(app)
+//       .post("/api/articles/:article_id/comments")
+//       .send(newTeam)
+//       .expect(201)
+//       .then(({ body }) => {
+//         expect().toBe(5);
+//         expect().toBe("Inhumans");
+//         expect().toBe(1965);
+//       });
+//   });
+// });
