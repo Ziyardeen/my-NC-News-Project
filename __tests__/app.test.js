@@ -336,3 +336,18 @@ describe("GET 200 /api/users", () => {
       });
   });
 });
+
+describe("GET 200 /api/articles", () => {
+  test("GET Status 200: return an array of users filtered to topics", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body }) => {
+        const query = "cats";
+        expect(body.length).toBe(1);
+        body.forEach((article) => {
+          expect(article.topic).toBe(query);
+        });
+      });
+  });
+});
