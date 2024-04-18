@@ -30,6 +30,7 @@ app.delete("/api/comments/:comment_id", deleteCommentById);
 app.get("/api/users", getUsers);
 
 //ERROR HANDLING
+
 /////////////BAD REQUEST
 
 app.use((err, req, res, next) => {
