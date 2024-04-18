@@ -6,6 +6,7 @@ const {
   checkArticleExists,
   insertComment,
   updateVotes,
+  removeCommentById,
 } = require("./app.models");
 const endpoints = require("./endpoints.json");
 
@@ -99,6 +100,18 @@ function patchArticleById(req, res, next) {
       next(err);
     });
 }
+
+function deleteCommentById(req, res, next) {
+  const { comment_id } = req.params;
+
+  Promise.all([removeCommentById(comment_id), checkArticleExists(comment_id)])
+    .then((data) => {
+      res.status(204).send();
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
 module.exports = {
   healthcheck,
   getTopics,
@@ -108,4 +121,5 @@ module.exports = {
   getCommentsByArticleById,
   postCommentByArticleId,
   patchArticleById,
+  deleteCommentById,
 };
