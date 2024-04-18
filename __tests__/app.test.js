@@ -174,7 +174,7 @@ describe(" /api/articles/:article_id/comments", () => {
         expect(body).toBeSortedBy("created_at", { descending: true });
       });
   });
-  //Refactored Test Case
+
   test("GET Status 200: valid id with no associated comments", () => {
     return request(app)
       .get("/api/articles/2/comments")
@@ -203,7 +203,7 @@ describe(" /api/articles/:article_id/comments", () => {
 });
 
 describe("POST:/api/articles/:article_id/comments", () => {
-  test.only("POST 201", () => {
+  test("POST 201 returns the posted item", () => {
     const newComment = {
       username: "icellusedkars",
       body: "Hello",
@@ -241,6 +241,51 @@ describe("POST:/api/articles/:article_id/comments", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Username Not found");
+      });
+  });
+  test("POST 201 returns the posted item even if more properties are included in the posted item", () => {
+    const newComment = {
+      username: "icellusedkars",
+      body: "Hello",
+      comment_id: 19,
+      article_id: 1,
+      author: "icellusedkars",
+      votes: 0,
+      created_at: "2024-04-18T12:06:42.454Z",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.author).toBe(newComment.username);
+        expect(body.body).toBe(newComment.body);
+      });
+  });
+  test("POST:404 responds with an appropriate status and error message when provided with a valid id is provided but not found", () => {
+    const newComment = {
+      username: "John Doe",
+      body: "Hello",
+    };
+    return request(app)
+      .post("/api/articles/999/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Username Not found");
+      });
+  });
+  test("POST:400 responds with an appropriate status and error message when provided with an invalid id is provided (wrong username)", () => {
+    const newComment = {
+      username: "John Doe",
+      body: "Hello",
+    };
+    return request(app)
+      .post("/api/articles/Not_an_id/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
       });
   });
 });
@@ -353,7 +398,7 @@ describe("GET 200 /api/articles topics queries", () => {
 });
 //Task 12 in progress
 describe("/api/articles/:article_id with comment_Count", () => {
-  test.only("GET:200 sends a single article object to the client", () => {
+  test("GET:200 sends a single article object to the client", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
