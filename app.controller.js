@@ -8,6 +8,7 @@ const {
   updateVotes,
   removeCommentById,
   fetchUsers,
+  checkTopicExists,
 } = require("./app.models");
 const endpoints = require("./endpoints.json");
 
@@ -33,7 +34,8 @@ function getArticleById(req, res, next) {
 
   fetchArticleById(article_id)
     .then((data) => {
-      res.status(200).send(data);
+      const response = { article: data };
+      res.status(200).send(response);
     })
     .catch((err) => {
       next(err);
@@ -43,8 +45,8 @@ function getArticleById(req, res, next) {
 function getArticles(req, res, next) {
   const { topic } = req.query;
 
-  fetchArticles(topic)
-    .then((articles) => {
+  Promise.all([fetchArticles(topic), checkTopicExists(topic)])
+    .then(([articles]) => {
       res.status(200).send(articles);
     })
     .catch((err) => {

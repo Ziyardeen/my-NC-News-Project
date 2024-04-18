@@ -15,7 +15,7 @@ beforeEach(() => {
   return seed(data);
 });
 
-describe("GET /api/topics", () => {
+describe("GET Bad URLs", () => {
   test("404- test for bad URL", () => {
     return request(app).get("/Not_A_URl").expect(404);
   });
@@ -83,14 +83,14 @@ describe("/api/articles/:article_id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
-        expect(body.author).toBe("butter_bridge");
-        expect(body.title).toBe("Living in the shadow of a great man");
-        expect(body.article_id).toBe(1);
-        expect(body.body).toBe("I find this existence challenging");
-        expect(body.topic).toBe("mitch");
-        expect(typeof body.created_at).toBe("string");
-        expect(body.votes).toBe(100);
-        expect(body.article_img_url).toBe(
+        expect(body.article.author).toBe("butter_bridge");
+        expect(body.article.title).toBe("Living in the shadow of a great man");
+        expect(body.article.article_id).toBe(1);
+        expect(body.article.body).toBe("I find this existence challenging");
+        expect(body.article.topic).toBe("mitch");
+        expect(typeof body.article.created_at).toBe("string");
+        expect(body.article.votes).toBe(100);
+        expect(body.article.article_img_url).toBe(
           "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         );
       });
@@ -291,7 +291,7 @@ describe("POST:/api/articles/:article_id/comments", () => {
 });
 
 describe("PATCH /api/articles/:article_id", () => {
-  test("200 - returns the updated ride", () => {
+  test("200 - returns the updated article", () => {
     const updateVotes = { inc_votes: 1 };
     return request(app)
       .patch("/api/articles/1")
@@ -339,6 +339,16 @@ describe("PATCH /api/articles/:article_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Not found");
+      });
+  });
+  test("PATCH:400 responds with an appropriate status and error message when provided with a invalid article_id (article Not found )", () => {
+    const updateVotes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/not_a_Number")
+      .send(updateVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
       });
   });
 });
@@ -395,6 +405,22 @@ describe("GET 200 /api/articles topics queries", () => {
         });
       });
   });
+  test("GET Status 200: return an empty array when topic exist but no articles for that topic ", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(0);
+      });
+  });
+  test("GET Status 404: returns an apppropraite error for non-existent topics eg. banana ", () => {
+    return request(app)
+      .get("/api/articles?topic=banana")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Not found");
+      });
+  });
 });
 
 describe("/api/articles/:article_id with comment_Count", () => {
@@ -403,8 +429,8 @@ describe("/api/articles/:article_id with comment_Count", () => {
       .get("/api/articles/1")
       .expect(200)
       .then(({ body }) => {
-        expect(typeof body.comment_count).toBe("string");
-        expect(body.comment_count).toBe("11");
+        expect(typeof body.article.comment_count).toBe("string");
+        expect(body.article.comment_count).toBe("11");
       });
   });
 });
