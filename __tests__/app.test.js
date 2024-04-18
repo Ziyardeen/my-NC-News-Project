@@ -275,7 +275,7 @@ describe("POST:/api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Username Not found");
       });
   });
-  test("POST:400 responds with an appropriate status and error message when provided with an invalid id is provided (wrong username)", () => {
+  test("POST:400 responds with an appropriate status and error message when provided with an invalid id is provided", () => {
     const newComment = {
       username: "John Doe",
       body: "Hello",
@@ -396,9 +396,9 @@ describe("GET 200 /api/articles topics queries", () => {
       });
   });
 });
-//Task 12 in progress
+
 describe("/api/articles/:article_id with comment_Count", () => {
-  test("GET:200 sends a single article object to the client", () => {
+  test("GET:200 sends a single article object to the client with a comment count", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
