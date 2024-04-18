@@ -91,6 +91,14 @@ function updateVotes(article_id, inc_votes) {
 function removeCommentById(comment_id) {
   return db.query(`DELETE FROM comments WHERE comment_id = $1`, [comment_id]);
 }
+
+function fetchUsers() {
+  return db
+    .query("SELECT username, name, avatar_url FROM users")
+    .then(({ rows }) => {
+      return rows;
+    });
+}
 module.exports = {
   fetchTopics,
   fetchArticleById,
@@ -100,4 +108,5 @@ module.exports = {
   insertComment,
   updateVotes,
   removeCommentById,
+  fetchUsers,
 };

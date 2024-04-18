@@ -320,3 +320,19 @@ describe("DELETE:204 deletes the specified team and sends no body back", () => {
       });
   });
 });
+
+describe("GET 200 /api/users", () => {
+  test("GET Status 200: return an array of users", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(4);
+        body.forEach((user) => {
+          expect(typeof user.username).toBe("string");
+          expect(typeof user.name).toBe("string");
+          expect(typeof user.avatar_url).toBe("string");
+        });
+      });
+  });
+});

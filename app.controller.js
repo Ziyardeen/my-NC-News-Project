@@ -7,6 +7,7 @@ const {
   insertComment,
   updateVotes,
   removeCommentById,
+  fetchUsers,
 } = require("./app.models");
 const endpoints = require("./endpoints.json");
 
@@ -112,6 +113,17 @@ function deleteCommentById(req, res, next) {
       next(err);
     });
 }
+
+function getUsers(req, res, next) {
+  fetchUsers()
+    .then((users) => {
+      res.status(200).send(users);
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
+}
 module.exports = {
   healthcheck,
   getTopics,
@@ -122,4 +134,5 @@ module.exports = {
   postCommentByArticleId,
   patchArticleById,
   deleteCommentById,
+  getUsers,
 };
