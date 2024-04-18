@@ -24,9 +24,6 @@ function fetchArticleById(aritcleId) {
         return Promise.reject({ status: 404, msg: "Not Found" });
       }
       return rows[0];
-    })
-    .catch((err) => {
-      return Promise.reject(err);
     });
 }
 
@@ -81,6 +78,18 @@ function checkArticleExists(article_id) {
       }
     });
 }
+function checkTopicExists(topic) {
+  if (topic === undefined) {
+    return Promise.resolve(topic);
+  }
+  return db
+    .query("SELECT * FROM topics WHERE slug = $1", [topic])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Not found" });
+      }
+    });
+}
 
 function insertComment(article_id, author, body) {
   return db
@@ -125,4 +134,5 @@ module.exports = {
   updateVotes,
   removeCommentById,
   fetchUsers,
+  checkTopicExists,
 };
