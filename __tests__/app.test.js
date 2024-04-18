@@ -203,7 +203,7 @@ describe(" /api/articles/:article_id/comments", () => {
 });
 
 describe("POST:/api/articles/:article_id/comments", () => {
-  test("POST 201", () => {
+  test.only("POST 201", () => {
     const newComment = {
       username: "icellusedkars",
       body: "Hello",
@@ -337,7 +337,7 @@ describe("GET 200 /api/users", () => {
   });
 });
 
-describe("GET 200 /api/articles", () => {
+describe("GET 200 /api/articles topics queries", () => {
   test("GET Status 200: return an array of users filtered to topics", () => {
     return request(app)
       .get("/api/articles?topic=cats")
@@ -348,6 +348,18 @@ describe("GET 200 /api/articles", () => {
         body.forEach((article) => {
           expect(article.topic).toBe(query);
         });
+      });
+  });
+});
+//Task 12 in progress
+describe("/api/articles/:article_id with comment_Count", () => {
+  test.only("GET:200 sends a single article object to the client", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(typeof body.comment_count).toBe("string");
+        expect(body.comment_count).toBe("11");
       });
   });
 });
