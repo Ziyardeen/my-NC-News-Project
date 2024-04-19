@@ -5,7 +5,7 @@
   "main": "listen.js",
   "scripts": {
     "start": "node listen.js",
-    "seed-prod": "NODE_ENV=production yarn run seed",
+    "seed-prod": "NODE_ENV=production npm run seed",
     "dev": "nodemon app.js",
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
@@ -30,7 +30,8 @@
     "jest-extended": "^2.0.0",
     "jest-sorted": "^1.0.15",
     "pg-format": "^1.0.4",
-    "supertest": "^6.3.4"
+    "supertest": "^6.3.4",
+    "yarn": "^1.22.22"
   },
   "dependencies": {
     "dotenv": "^16.0.0",
