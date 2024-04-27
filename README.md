@@ -1,4 +1,4 @@
-# Northcoders News API
+# Northcoders News API/Reddit
 
 #ACCESSING THE DATABASE LOCALLY
 To access the datbase locally, one must add test and development environment variables with the database names where apprapriate to successfully connect to the database.
