@@ -11,8 +11,10 @@ const {
   deleteCommentById,
   getUsers,
 } = require("./app.controller");
+const cors = require("cors");
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 // SERVER HEALTHCHECK
@@ -48,6 +50,12 @@ app.use((err, req, res, next) => {
 
 app.use((err, req, res, next) => {
   if (err.status === 404) {
+    res.status(err.status).send({ msg: err.msg });
+  }
+  next(err);
+});
+app.use((err, req, res, next) => {
+  if (err.status === 400) {
     res.status(err.status).send({ msg: err.msg });
   }
   next(err);
