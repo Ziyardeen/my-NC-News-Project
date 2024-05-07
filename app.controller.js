@@ -43,9 +43,8 @@ function getArticleById(req, res, next) {
 }
 
 function getArticles(req, res, next) {
-  const { topic } = req.query;
-
-  Promise.all([fetchArticles(topic), checkTopicExists(topic)])
+  const { topic, sort_by, order } = req.query;
+  Promise.all([fetchArticles(topic, sort_by, order), checkTopicExists(topic)])
     .then(([articles]) => {
       res.status(200).send(articles);
     })
@@ -127,6 +126,11 @@ function getUsers(req, res, next) {
       next(err);
     });
 }
+
+// function getArticlesQueries(req, res, next) {
+//    const {sort_by,order} = req.queries
+
+// }
 module.exports = {
   healthcheck,
   getTopics,

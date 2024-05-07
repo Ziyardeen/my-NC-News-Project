@@ -434,3 +434,49 @@ describe("/api/articles/:article_id with comment_Count", () => {
       });
   });
 });
+
+describe("/api/articles/query=value based on sort_by for a valid column (created_at) in order of descending or ascedning order", () => {
+  test("GET Status 200: sort_by return an array of users filtered to sort_by in  descending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at&order=desc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(13);
+        expect(body).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+
+  test("GET Status 200: sort_by return an array of users filtered to sort_by in  ascending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.length).toBe(13);
+        expect(body).toBeSortedBy("created_at");
+      });
+  });
+  test("GET Status 400: When sort_by query is invalid", () => {
+    return request(app)
+      .get("/api/articles?sort_by=age&order=asc")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid sort query");
+      });
+  });
+  test("GET Status 400: When order query is invalid", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at&order=increase")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid order query");
+      });
+  });
+  test("GET Status 400: When both query are invalid", () => {
+    return request(app)
+      .get("/api/articles?sort_by=age&order=increase")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid queries");
+      });
+  });
+});

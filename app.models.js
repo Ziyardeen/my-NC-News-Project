@@ -27,36 +27,36 @@ function fetchArticleById(aritcleId) {
     });
 }
 
-function fetchArticles(topic) {
-  const topicArr = [];
-  let queryText = `SELECT a.author,
-    a.title,
-    a.article_id,
-    a.topic,
-    a.created_at,
-    a.votes,
-    a.article_img_url,
-    COUNT(c.comment_id) AS comment_count
-   FROM articles a
-   LEFT JOIN comments c ON a.article_id = c.article_id`;
+// function fetchArticles(topic) {
+//   const topicArr = [];
+//   let queryText = `SELECT a.author,
+//     a.title,
+//     a.article_id,
+//     a.topic,
+//     a.created_at,
+//     a.votes,
+//     a.article_img_url,
+//     COUNT(c.comment_id) AS comment_count
+//    FROM articles a
+//    LEFT JOIN comments c ON a.article_id = c.article_id`;
 
-  if (topic) {
-    queryText += ` WHERE a.topic = $1`;
-    topicArr.push(topic);
-  }
-  queryText += ` GROUP BY a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url
-  ORDER BY a.created_at DESC;`;
+//   if (topic) {
+//     queryText += ` WHERE a.topic = $1`;
+//     topicArr.push(topic);
+//   }
+//   queryText += ` GROUP BY a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url
+//   ORDER BY a.created_at DESC;`;
 
-  return db
-    .query(queryText, topicArr)
+//   return db
+//     .query(queryText, topicArr)
 
-    .then(({ rows }) => {
-      return rows;
-    })
-    .catch((err) => {
-      return err;
-    });
-}
+//     .then(({ rows }) => {
+//       return rows;
+//     })
+//     .catch((err) => {
+//       return err;
+//     });
+// }
 
 function fetchCommentsByArticleById(articleId) {
   return db
@@ -124,6 +124,57 @@ function fetchUsers() {
       return rows;
     });
 }
+
+//////////////////
+function fetchArticles(topic, sort_by, order) {
+  const topicArr = [];
+  const sortList = ["created_at"];
+  const orderList = ["asc", "desc"];
+  let queryText = `SELECT a.author,
+      a.title,
+      a.article_id,
+      a.topic,
+      a.created_at,
+      a.votes,
+      a.article_img_url,
+      COUNT(c.comment_id) AS comment_count
+     FROM articles a
+     LEFT JOIN comments c ON a.article_id = c.article_id`;
+
+  if (topic) {
+    queryText += " WHERE a.topic = $1";
+    topicArr.push(topic);
+  }
+
+  queryText +=
+    " GROUP BY a.author, a.title, a.article_id, a.topic, a.created_at, a.votes, a.article_img_url ORDER BY ";
+
+  if (sort_by && order) {
+    if (!sortList.includes(sort_by) && !orderList.includes(order)) {
+      return Promise.reject({ status: 400, msg: "Invalid queries" });
+    } else if (!sortList.includes(sort_by)) {
+      return Promise.reject({ status: 400, msg: "Invalid sort query" });
+    } else if (!orderList.includes(order)) {
+      return Promise.reject({ status: 400, msg: "Invalid order query" });
+    }
+
+    queryText += ` ${sort_by} ${order};`;
+  } else {
+    queryText += " a.created_at DESC;";
+  }
+
+  return db
+    .query(queryText, topicArr)
+
+    .then(({ rows }) => {
+      return rows;
+    });
+  // .catch((err) => {
+  //   console.log(err, "<<<<<<<<<");
+  //   Promise.reject(err);
+  // });
+}
+//////////////////
 module.exports = {
   fetchTopics,
   fetchArticleById,
