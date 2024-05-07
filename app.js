@@ -16,7 +16,11 @@ const cors = require("cors");
 const app = express();
 app.use(express.json());
 
-app.use(cors());
+const corsOptions = {
+  origin: ["http://localhost:5173/", "http://localhost:5173"],
+  allowedMethods: ["GET", "POST", "PATCH"],
+};
+app.use(cors(corsOptions));
 
 // SERVER HEALTHCHECK
 app.get("/api/healthcheck", healthcheck);
