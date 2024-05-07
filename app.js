@@ -11,27 +11,13 @@ const {
   deleteCommentById,
   getUsers,
 } = require("./app.controller");
-
 const cors = require("cors");
 
 const app = express();
 app.use(express.json());
 
-const allowedOrigins = ["http://localhost:5173/", "http://localhost:3000"]; // Replace with your allowed origins
+app.use(cors());
 
-const corsOptions = {
-  origin: allowedOrigins,
-  methods: ["GET", "POST", "PUT", "DELETE"], // Allowed methods
-  headers: ["Content-Type", "Authorization", "X-Requested-With"], // Allowed headers
-  credentials: true, // Allow credentials
-};
-
-app.use(cors(corsOptions));
-
-app.options("*", cors(corsOptions), (req, res) => {
-  res.send(200); // Allow the preflight request
-});
-////////////////////////////////////
 // SERVER HEALTHCHECK
 app.get("/api/healthcheck", healthcheck);
 
