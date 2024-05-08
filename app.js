@@ -14,13 +14,13 @@ const {
 const cors = require("cors");
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 // const corsOptions = {
 //   origin: ["http://localhost:5173/", "http://localhost:5173"],
 //   allowedMethods: ["GET", "POST", "PATCH"],
 // };
-app.use(cors());
 
 // SERVER HEALTHCHECK
 app.get("/api/healthcheck", healthcheck);
