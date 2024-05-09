@@ -368,7 +368,7 @@ describe("DELETE:204 deletes the specified team and sends no body back", () => {
   });
   test("DELETE:400 responds with an appropriate status and error message when given an invalid id", () => {
     return request(app)
-      .delete("/api/comments/not-a-team")
+      .delete("/api/comments/not-a-comment")
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad request");

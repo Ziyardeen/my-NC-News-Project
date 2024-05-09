@@ -9,6 +9,7 @@ const {
   removeCommentById,
   fetchUsers,
   checkTopicExists,
+  checkCommentExists,
 } = require("./app.models");
 const endpoints = require("./endpoints.json");
 
@@ -108,7 +109,7 @@ function patchArticleById(req, res, next) {
 function deleteCommentById(req, res, next) {
   const { comment_id } = req.params;
 
-  Promise.all([removeCommentById(comment_id), checkArticleExists(comment_id)])
+  Promise.all([checkCommentExists(comment_id), removeCommentById(comment_id)])
     .then((data) => {
       res.status(204).send();
     })
